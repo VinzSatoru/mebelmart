@@ -1,0 +1,543 @@
+/* Test CSS */
+body {
+    background-color: var(--gray-100) !important;
+}
+
+/* Custom Variables */
+:root {
+  --primary: #2C3639;     /* Warna gelap elegan */
+  --secondary: #3F4E4F;   /* Warna gelap kedua */
+  --accent: #A27B5C;      /* Warna kayu/coklat */
+  --light: #DCD7C9;       /* Warna cream muda */
+  --white: #FFFFFF;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-600: #6c757d;
+  --gray-800: #343a40;
+}
+
+/* General Styles */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card Hover Effects */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+/* Custom Button Styles */
+.btn {
+  border-radius: 5px;
+  padding: 0.5rem 1.5rem;
+}
+
+/* Product Image Styles */
+.product-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Custom Form Styles */
+.form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(162, 123, 92, 0.25);
+}
+
+/* Footer Styles */
+footer {
+  margin-top: auto;
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 3rem 0;
+}
+
+footer a {
+  color: var(--light);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--accent);
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Override Bootstrap Primary Color */
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background-color: #8B6B4F;
+  border-color: #8B6B4F;
+}
+
+.btn-outline-primary {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.text-primary {
+  color: var(--accent) !important;
+}
+
+/* Navbar Styling */
+.navbar {
+  background-color: var(--white);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  color: var(--gray-800);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--accent);
+}
+
+
+
+
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(45deg, #1a1c20 0%, #2d3436 100%);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../images/pattern.png');
+    opacity: 0.1;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1s ease;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease 0.2s;
+}
+
+.hero-section img {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeInRight 1s ease 0.4s;
+}
+
+/* Featured Products */
+.featured-product-card {
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.featured-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.featured-product-card img {
+    transition: transform 0.3s ease;
+}
+
+.featured-product-card:hover img {
+    transform: scale(1.05);
+}
+
+.featured-product-card .card-body {
+    padding: 1.5rem;
+}
+
+.featured-product-card .badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+/* Categories Section */
+.category-card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: linear-gradient(45deg, #f8f9fa 0%, #fff 100%);
+    overflow: hidden;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.category-card .card-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+.category-card i {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--bs-primary);
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover i {
+    transform: scale(1.1);
+}
+
+/* Why Choose Us */
+.why-choose-us {
+    background: linear-gradient(45deg, #f8f9fa 0%, #fff 100%);
+    padding: 80px 0;
+}
+
+.feature-box {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.feature-box i {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--bs-primary);
+    transition: transform 0.3s ease;
+}
+
+.feature-box:hover i {
+    transform: rotate(360deg);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .featured-product-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-primary-dark);
+}
+
+/* Category Icons */
+.category-icon {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+/* Admin Dashboard */
+.sidebar {
+  background-color: var(--primary);
+  min-height: 100vh;
+}
+
+.sidebar .nav-link {
+  color: var(--light);
+  padding: 0.8rem 1rem;
+  margin: 0.2rem 0;
+  border-radius: 0.25rem;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+/* Tables */
+.table th {
+  background-color: var(--gray-100);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Pagination */
+.page-link {
+  color: var(--accent);
+}
+
+.page-item.active .page-link {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Forms */
+.form-label {
+  color: var(--gray-800);
+  font-weight: 500;
+}
+
+/* Badges */
+.badge.bg-success {
+  background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+/* Cart Counter */
+.cart-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--accent);
+  color: white;
+  border-radius: 50%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0;
+  }
+  
+  .card-img-top {
+    height: 180px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+}
+
+/* Product Card Styling */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.product-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-card .badge {
+    font-weight: 500;
+    padding: 0.5em 1em;
+}
+
+.product-card .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .product-card .card-img-top {
+        height: 180px;
+    }
+}
+
+/* Wave Effect */
+.wave-container {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.waves {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    margin-bottom: -7px;
+    min-height: 100px;
+    max-height: 150px;
+}
+
+.parallax > use {
+    animation: move-forever 15s cubic-bezier(.55,.5,.45,.5) infinite;
+}
+.parallax > use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 7s;
+    opacity: 0.7;
+}
+.parallax > use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 10s;
+    opacity: 0.5;
+}
+.parallax > use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 13s;
+    opacity: 0.3;
+}
+.parallax > use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 20s;
+    opacity: 1;
+}
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px,0,0);
+    }
+    100% { 
+        transform: translate3d(85px,0,0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .waves {
+        height: 40px;
+        min-height: 40px;
+    }
+    .hero-section {
+        height: 30vh;
+    }
+}
+
+/* Pastikan hero section memiliki tinggi yang cukup */
+.hero-section {
+    min-height: 100vh;
+    background: linear-gradient(45deg, #1a1c20 0%, #2d3436 100%);
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 100px;
+}
+
+/* Sesuaikan margin untuk konten setelah hero */
+.featured-products {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    padding-top: 50px;
+}

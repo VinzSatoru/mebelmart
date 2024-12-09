@@ -1,0 +1,66 @@
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674b0194c51773b239073c5f
+)
+
+Looking for product: 674b0194c51773b239073c5f
+Error: Produk tidak ditemukan atau tidak tersedia
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674b0194c51773b239073c5e
+)
+
+Looking for product: 674b0194c51773b239073c5e
+Error: Produk tidak ditemukan atau tidak tersedia
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674b0194c51773b239073c5e
+)
+
+Looking for product: 674b0194c51773b239073c5e
+Error: Produk tidak ditemukan atau tidak tersedia
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674b0194c51773b239073c5e
+)
+
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674c559c46a3e91cb909fdd2
+    [quantity] => 3
+)
+
+Looking for product: 674c559c46a3e91cb909fdd2
+Cart updated successfully
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674c559c46a3e91cb909fdd2
+    [quantity] => 3
+)
+
+Looking for product: 674c559c46a3e91cb909fdd2
+Cart updated successfully
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674c559c46a3e91cb909fdd2
+    [quantity] => 1
+)
+
+Looking for product: 674c559c46a3e91cb909fdd2
+Cart updated successfully
+Request Method: POST
+POST data: Array
+(
+    [product_id] => 674c559c46a3e91cb909fdd2
+    [quantity] => 1
+)
+
+Looking for product: 674c559c46a3e91cb909fdd2
+Cart updated successfully
