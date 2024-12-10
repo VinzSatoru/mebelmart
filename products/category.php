@@ -37,16 +37,11 @@ include '../includes/header.php';
 ?>
 
 <div class="container py-5">
-    <div class="row mb-4">
-        <div class="col">
-            <h2><?= htmlspecialchars($category->name) ?></h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Beranda</a></li>
-                    <li class="breadcrumb-item active"><?= htmlspecialchars($category->name) ?></li>
-                </ol>
-            </nav>
-        </div>
+    <div class="mb-4">
+        <a href="<?= BASE_URL ?>/products/index.php" class="btn btn-primary rounded-pill shadow-sm hover-effect">
+            <i class="bi bi-arrow-left-circle-fill me-2"></i>
+            Lihat Produk
+        </a>
     </div>
 
     <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -98,5 +93,27 @@ include '../includes/header.php';
         <?php endif; ?>
     </div>
 </div>
+<style>
+    .hover-effect {
+        transition: all 0.3s ease;
+        border: none;
+        background: linear-gradient(45deg, #1a1c20 0%, #2d3436 100%);
+        padding: 10px 25px;
+        font-size: 1rem;
+    }
 
-<?php include '../includes/footer.php'; ?> 
+    .hover-effect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+        background: linear-gradient(45deg, #2d3436 0%, #1a1c20 100%);
+    }
+
+    .hover-effect i {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-effect:hover i {
+        transform: translateX(-3px);
+    }
+    </style>
+
