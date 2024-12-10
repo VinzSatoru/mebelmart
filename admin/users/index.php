@@ -46,7 +46,6 @@ include '../../includes/header.php';
                                     <th style="width: 20%">Email</th>
                                     <th style="width: 15%">No. Telepon</th>
                                     <th style="width: 25%">Alamat</th>
-                                    <th style="width: 10%">Status</th>
                                     <th style="width: 10%">Terdaftar</th>
                                 </tr>
                             </thead>
@@ -60,8 +59,8 @@ include '../../includes/header.php';
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm me-3">
-                                                    <?php if (!empty($user->image)): ?>
-                                                        <img src="<?= BASE_URL ?>/uploads/profiles/<?= $user->image ?>" 
+                                                    <?php if (!empty($user->photo)): ?>
+                                                        <img src="<?= BASE_URL ?>/uploads/profiles/<?= $user->photo ?>" 
                                                              class="rounded-circle" 
                                                              alt="<?= htmlspecialchars($user->username) ?>">
                                                     <?php else: ?>
@@ -84,11 +83,6 @@ include '../../includes/header.php';
                                             <?php else: ?>
                                                 <span class="text-muted">Belum diisi</span>
                                             <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-<?= $user->is_active ? 'success' : 'danger' ?>">
-                                                <?= $user->is_active ? 'Aktif' : 'Nonaktif' ?>
-                                            </span>
                                         </td>
                                         <td><?= formatDate($user->created_at) ?></td>
                                     </tr>

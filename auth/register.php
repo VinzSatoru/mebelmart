@@ -2,48 +2,71 @@
 require_once '../config/config.php';
 require_once '../config/database.php';
 
+// Cek jika sudah login
 if (isLoggedIn()) {
     redirect('/');
 }
 
+// Inisialisasi variabel
 $error = '';
 $success = '';
 
+// Proses form ketika di-submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+    $phone = preg_replace('/[^0-9]/', '', $_POST['phone']);
 
-    if ($password !== $confirm_password) {
+    // Validasi input
+    if (empty($username) || empty($email) || empty($password) || empty($confirm_password) || empty($phone)) {
+        $error = 'Semua field harus diisi!';
+    } elseif (!ctype_digit($_POST['phone'])) { // Cek jika input phone hanya angka
+        $error = 'Nomor telepon hanya boleh berisi angka!';
+    } elseif ($password !== $confirm_password) {
         $error = 'Password tidak cocok!';
+    } elseif (strlen($phone) < 10 || strlen($phone) > 13) {
+        $error = 'Nomor telepon harus terdiri dari 10-13 angka!';
     } else {
-        $db = new Database();
-        $users = $db->getCollection('users');
+        try {
+            $db = new Database();
+            $users = $db->getCollection('users');
 
-        // Cek email sudah terdaftar
-        $existingUser = $users->findOne(['email' => $email]);
-        if ($existingUser) {
-            $error = 'Email sudah terdaftar!';
-        } else {
-            // Insert user baru
-            $result = $users->insertOne([
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
-                'role' => 'customer',
-                'created_at' => new MongoDB\BSON\UTCDateTime()
-            ]);
-
-            if ($result->getInsertedCount()) {
-                $success = 'Registrasi berhasil! Silakan login.';
+            // Cek username sudah ada
+            $existingUsername = $users->findOne(['username' => $username]);
+            if ($existingUsername) {
+                $error = 'Username sudah digunakan!';
             } else {
-                $error = 'Terjadi kesalahan, silakan coba lagi.';
+                // Cek email sudah ada
+                $existingEmail = $users->findOne(['email' => $email]);
+                if ($existingEmail) {
+                    $error = 'Email sudah terdaftar!';
+                } else {
+                    // Insert user baru
+                    $result = $users->insertOne([
+                        'username' => $username,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'password' => password_hash($password, PASSWORD_DEFAULT),
+                        'role' => 'customer',
+                        'created_at' => new MongoDB\BSON\UTCDateTime()
+                    ]);
+
+                    if ($result->getInsertedCount()) {
+                        $success = 'Registrasi berhasil! Silakan login.';
+                    } else {
+                        $error = 'Terjadi kesalahan saat mendaftar.';
+                    }
+                }
             }
+        } catch (Exception $e) {
+            $error = 'Terjadi kesalahan sistem. Silakan coba lagi.';
         }
     }
 }
 ?>
+
 
 <!-- Tambahkan Google Fonts di header -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -172,18 +195,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .card-body {
-        padding: 3rem 5rem !important; /* Diperbesar dari 4rem */
+        padding: 2rem 5rem !important; /* Diperbesar dari 4rem */
     }
 
     .logo-wrapper {
         background: linear-gradient(45deg, #1a1c20 0%, #2d3436 100%);
         margin: -3rem -5rem 2rem -5rem; /* Sesuaikan dengan padding card-body */
-        padding: 2.5rem; /* Sedikit lebih besar */
+        padding-top: 2rem;
+        padding-bottom: 0.25rem;
+        /* Sedikit lebih besar */
         text-align: center;
     }
 
     .logo-wrapper img {
-        max-width: 180px; /* Diperbesar dari 150px */
+        max-width: 60px; /* Diperbesar dari 150px */
     }
 
     h4 {
@@ -192,14 +217,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         margin-top: 1rem;
         font-size: 1.5rem;
     }
-
+    .mb-4 {
+        margin-bottom: -0.5rem !important;
+        width: 100%;
+    }
     .form-label {
         font-weight: 500;
         color: #1a1c20;
     }
 
     .form-control {
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 0.75rem 1rem;
         margin-bottom: 1rem;
         font-size: 0.95rem;
@@ -219,6 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .btn-primary {
+        margin-top: 1rem;
         padding: 0.75rem 1.5rem;
         font-weight: 500;
         color: #ffffff;
@@ -300,7 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <?php if ($success): ?>
                             <div class="alert alert-success mx-3 mt-3"><?= $success ?></div>
-                            <div class="text-center mb-3">
+                            <div class="text-center mb-3" style="margin-top: 1rem;">
                                 <a href="login.php" class="btn btn-primary">Login Sekarang</a>
                             </div>
                         <?php else: ?>
@@ -324,6 +353,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </span>
                                             <input type="email" class="form-control" id="email" name="email" 
                                                    placeholder="Masukkan email" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="email" class="form-label">Nomor Telepon</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-envelope"></i>
+                                            </span>
+                                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                                   placeholder="Masukkan nomor telepon anda" required>
                                         </div>
                                     </div>
                                     <div class="mb-4">

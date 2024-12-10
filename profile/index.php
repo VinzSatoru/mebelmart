@@ -13,70 +13,151 @@ $user = $db->getCollection('users')->findOne([
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $photo = $_FILES['photo'];
-            $allowedTypes = ['image/jpeg', 'image/png'];
-            $maxSize = 5 * 1024 * 1024; // 5MB
+        // Handle update data profil
+        if (isset($_POST['update_profile'])) {
+            $fullname = filter_input(INPUT_POST, 'fullname', FILTER_SANITIZE_SPECIAL_CHARS);
+            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $phone = preg_replace('/[^0-9]/', '', $_POST['phone']);
+            $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS);
 
-            // Debug: Cek informasi file
-            error_log('File Type: ' . $photo['type']);
-            error_log('File Size: ' . $photo['size']);
-
-            // Validasi tipe file
-            if (!in_array($photo['type'], $allowedTypes)) {
-                throw new Exception('Tipe file harus JPG atau PNG');
+            // Validasi nomor telepon
+            if (!empty($phone) && (strlen($phone) < 10 || strlen($phone) > 13)) {
+                throw new Exception('Nomor telepon harus 10-13 digit!');
             }
 
-            // Validasi ukuran
-            if ($photo['size'] > $maxSize) {
-                throw new Exception('Ukuran file maksimal 5MB');
-            }
+            // Cek username dan email yang sudah ada (kecuali milik user sendiri)
+            $existingUser = $db->getCollection('users')->findOne([
+                '_id' => ['$ne' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])],
+                '$or' => [
+                    ['username' => $username],
+                    ['email' => $email]
+                ]
+            ]);
 
-            // Generate nama file unik
-            $extension = pathinfo($photo['name'], PATHINFO_EXTENSION);
-            $filename = $_SESSION['user_id'] . '_' . time() . '.' . $extension;
-            $uploadPath = '../uploads/profiles/' . $filename;
-
-            // Buat folder jika belum ada
-            if (!file_exists('../uploads/profiles')) {
-                mkdir('../uploads/profiles', 0777, true);
-            }
-
-            // Debug: Cek path upload
-            error_log('Upload Path: ' . $uploadPath);
-
-            // Hapus foto lama jika ada
-            if (!empty($user->photo)) {
-                $oldPhoto = '../uploads/profiles/' . $user->photo;
-                if (file_exists($oldPhoto)) {
-                    unlink($oldPhoto);
+            if ($existingUser) {
+                if ($existingUser->username === $username) {
+                    throw new Exception('Username sudah digunakan!');
+                }
+                if ($existingUser->email === $email) {
+                    throw new Exception('Email sudah terdaftar!');
                 }
             }
 
-            // Upload file
-            if (move_uploaded_file($photo['tmp_name'], $uploadPath)) {
-                // Update database
-                $result = $db->getCollection('users')->updateOne(
-                    ['_id' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])],
-                    ['$set' => [
-                        'photo' => $filename,
-                        'updated_at' => new MongoDB\BSON\UTCDateTime()
-                    ]]
-                );
+            // Update profil
+            $result = $db->getCollection('users')->updateOne(
+                ['_id' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])],
+                ['$set' => [
+                    'fullname' => $fullname,
+                    'username' => $username,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'address' => $address,
+                    'updated_at' => new MongoDB\BSON\UTCDateTime()
+                ]]
+            );
 
-                if ($result->getModifiedCount() > 0) {
-                    $_SESSION['profile_success'] = 'Foto profil berhasil diupdate';
-                    header('Location: ' . BASE_URL . '/profile');
-                    exit;
-                }
-            } else {
-                throw new Exception('Gagal mengupload file');
+            if ($result->getModifiedCount() > 0) {
+                $_SESSION['profile_success'] = 'Profil berhasil diperbarui!';
+                $_SESSION['username'] = $username; // Update session username
+                header('Location: ' . BASE_URL . '/profile');
+                exit;
             }
-        } else {
-            // Debug: Cek error upload
-            error_log('Upload Error: ' . $_FILES['photo']['error']);
-            throw new Exception('Pilih file foto terlebih dahulu');
         }
+
+        // Handle update password
+        if (isset($_POST['update_password'])) {
+            $current_password = $_POST['current_password'];
+            $new_password = $_POST['new_password'];
+            $confirm_password = $_POST['confirm_password'];
+
+            if ($new_password !== $confirm_password) {
+                throw new Exception('Password baru tidak cocok!');
+            }
+
+            if (!password_verify($current_password, $user->password)) {
+                throw new Exception('Password saat ini salah!');
+            }
+
+            $result = $db->getCollection('users')->updateOne(
+                ['_id' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])],
+                ['$set' => [
+                    'password' => password_hash($new_password, PASSWORD_DEFAULT),
+                    'updated_at' => new MongoDB\BSON\UTCDateTime()
+                ]]
+            );
+
+            if ($result->getModifiedCount() > 0) {
+                $_SESSION['profile_success'] = 'Password berhasil diperbarui!';
+                header('Location: ' . BASE_URL . '/profile');
+                exit;
+            }
+        }
+
+        // Handle upload foto - pindahkan ke bagian akhir
+        if (isset($_FILES['photo']) && is_array($_FILES['photo'])) {
+            if ($_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                $photo = $_FILES['photo'];
+                $allowedTypes = ['image/jpeg', 'image/png'];
+                $maxSize = 5 * 1024 * 1024; // 5MB
+
+                // Debug: Cek informasi file
+                error_log('File Type: ' . $photo['type']);
+                error_log('File Size: ' . $photo['size']);
+
+                // Validasi tipe file
+                if (!in_array($photo['type'], $allowedTypes)) {
+                    throw new Exception('Tipe file harus JPG atau PNG');
+                }
+
+                // Validasi ukuran
+                if ($photo['size'] > $maxSize) {
+                    throw new Exception('Ukuran file maksimal 5MB');
+                }
+
+                // Generate nama file unik
+                $extension = pathinfo($photo['name'], PATHINFO_EXTENSION);
+                $filename = $_SESSION['user_id'] . '_' . time() . '.' . $extension;
+                $uploadPath = '../uploads/profiles/' . $filename;
+
+                // Buat folder jika belum ada
+                if (!file_exists('../uploads/profiles')) {
+                    mkdir('../uploads/profiles', 0777, true);
+                }
+
+                // Hapus foto lama jika ada
+                if (!empty($user->photo)) {
+                    $oldPhoto = '../uploads/profiles/' . $user->photo;
+                    if (file_exists($oldPhoto)) {
+                        unlink($oldPhoto);
+                    }
+                }
+
+                // Upload file
+                if (move_uploaded_file($photo['tmp_name'], $uploadPath)) {
+                    // Update database
+                    $result = $db->getCollection('users')->updateOne(
+                        ['_id' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])],
+                        ['$set' => [
+                            'photo' => $filename,
+                            'updated_at' => new MongoDB\BSON\UTCDateTime()
+                        ]]
+                    );
+
+                    if ($result->getModifiedCount() > 0) {
+                        $_SESSION['profile_success'] = 'Foto profil berhasil diupdate';
+                        header('Location: ' . BASE_URL . '/profile');
+                        exit;
+                    }
+                } else {
+                    throw new Exception('Gagal mengupload file');
+                }
+            } elseif ($_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+                // Jika ada error selain tidak ada file yang diupload
+                throw new Exception('Error saat upload file: ' . $_FILES['photo']['error']);
+            }
+        }
+
     } catch (Exception $e) {
         $_SESSION['profile_error'] = $e->getMessage();
     }
@@ -136,13 +217,74 @@ include '../includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Upload Form -->
-                    <form action="" method="POST" enctype="multipart/form-data" id="uploadForm">
-                        <input type="file" class="d-none" id="photo" name="photo" accept="image/jpeg,image/png" onchange="submitForm()">
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> 
-                            Upload foto profil dengan format JPG/PNG, maksimal ukuran 5MB
+                    <!-- Form Edit Profil -->
+                    <form action="" method="POST" class="mt-4">
+                        <input type="hidden" name="update_profile" value="1">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="username" 
+                                       value="<?= htmlspecialchars($user->username) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" name="fullname" 
+                                       value="<?= htmlspecialchars($user->fullname ?? '') ?>">
+                            </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" 
+                                       value="<?= htmlspecialchars($user->email) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nomor HP</label>
+                                <input type="tel" class="form-control" name="phone" 
+                                       value="<?= htmlspecialchars($user->phone ?? '') ?>"
+                                       pattern="[0-9]{10,13}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Alamat</label>
+                            <textarea class="form-control" name="address" rows="3"><?= htmlspecialchars($user->address ?? '') ?></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Simpan Perubahan
+                        </button>
+                    </form>
+
+                    <!-- Form Ganti Password -->
+                    <hr class="my-4">
+                    <h5 class="mb-3">Ganti Password</h5>
+                    <form action="" method="POST">
+                        <input type="hidden" name="update_password" value="1">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Password Saat Ini</label>
+                            <input type="password" class="form-control" name="current_password" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Password Baru</label>
+                                <input type="password" class="form-control" name="new_password" 
+                                       required minlength="6">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control" name="confirm_password" 
+                                       required minlength="6">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-key"></i> Ganti Password
+                        </button>
                     </form>
                 </div>
             </div>
@@ -217,5 +359,26 @@ function submitForm() {
 .btn-lg {
     padding: 12px 30px;
     font-size: 1.1rem;
+}
+
+/* Tambahan style untuk form */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus {
+    border-color: #1a1c20;
+    box-shadow: 0 0 0 0.2rem rgba(26, 28, 32, 0.1);
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+}
+
+hr {
+    opacity: 0.15;
 }
 </style>
