@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     } else {
-        $error = 'Username/Email atau password salah!';
+        $error = '* Username/Email atau password salah!';
     }
 }
 ?>
@@ -252,6 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .alert {
         border-radius: 8px;
+        color: #fe2e2e;
+        font-size: 12px;
         border: none;
     }
 

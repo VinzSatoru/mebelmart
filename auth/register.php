@@ -265,6 +265,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .alert {
         border-radius: 8px;
+        color: #fe2e2e;
+        font-size: 12px;
         border: none;
     }
 

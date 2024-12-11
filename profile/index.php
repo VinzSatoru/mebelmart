@@ -191,7 +191,10 @@ include '../includes/header.php';
                                      class="rounded-circle img-thumbnail shadow"
                                      style="width: 180px; height: 180px; object-fit: cover;">
                             <?php endif; ?>
-                            <label for="photo" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer" style="cursor: pointer;">
+                            
+                            <!-- Tambahkan onclick handler -->
+                            <label for="photo" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2" 
+                                   style="cursor: pointer;" onclick="document.getElementById('photo').click();">
                                 <i class="bi bi-camera-fill"></i>
                             </label>
                         </div>
@@ -300,9 +303,50 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Tambahkan form upload yang tersembunyi -->
+<form id="uploadForm" action="" method="POST" enctype="multipart/form-data" style="display: none;">
+    <input type="file" id="photo" name="photo" accept="image/jpeg,image/png" onchange="submitForm()">
+</form>
+
 <script>
+// Fungsi untuk submit form saat file dipilih
 function submitForm() {
-    document.getElementById('uploadForm').submit();
+    const fileInput = document.getElementById('photo');
+    const file = fileInput.files[0];
+    
+    if (file) {
+        // Validasi ukuran file (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ukuran file maksimal 5MB!'
+            });
+            return;
+        }
+
+        // Validasi tipe file
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Tipe file harus JPG atau PNG!'
+            });
+            return;
+        }
+
+        // Tampilkan loading
+        Swal.fire({
+            title: 'Mengupload foto...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Submit form
+        document.getElementById('uploadForm').submit();
+    }
 }
 
 // Sweet Alert untuk success message
@@ -380,5 +424,24 @@ function submitForm() {
 
 hr {
     opacity: 0.15;
+}
+
+/* Tambahan style untuk tombol upload */
+label[for="photo"] {
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+label[for="photo"]:hover {
+    background-color: #0056b3 !important;
+    transform: scale(1.1);
+}
+
+.bi-camera-fill {
+    font-size: 1.2rem;
 }
 </style>

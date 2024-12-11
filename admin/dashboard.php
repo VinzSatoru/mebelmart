@@ -326,6 +326,78 @@ $avgOrderValue = $orderCount > 0 ? $totalRevenue / $orderCount : 0;
             position: relative;
             z-index: 2;
         }
+
+        /* Tambahkan style untuk sidebar mobile */
+        @media (max-width: 991.98px) {
+            .sidenav {
+                transform: translateX(-17.125rem);
+                transition: transform .2s ease-in-out;
+            }
+
+            .sidenav.bg-white {
+                background-color: #fff !important;
+            }
+
+            .g-sidenav-pinned .sidenav {
+                transform: translateX(0);
+                box-shadow: 0 0 2rem 0 rgba(0,0,0,.15);
+            }
+
+            .g-sidenav-pinned .main-content {
+                transform: translateX(17.125rem);
+            }
+
+            .g-sidenav-pinned .sidenav {
+                max-width: 17.125rem !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                transition: transform .2s ease-in-out;
+            }
+
+            /* Tombol toggle */
+            #iconNavbarSidenav {
+                padding: 0.5rem !important;
+                margin-right: 0.5rem;
+                border-radius: 0.5rem;
+            }
+
+            #iconNavbarSidenav:hover {
+                background-color: #f8f9fa;
+            }
+
+            /* Overlay saat sidebar terbuka */
+            .g-sidenav-pinned:before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.3);
+                z-index: 98;
+                transition: opacity .2s ease-in-out;
+            }
+        }
+
+        /* Perbaikan tampilan sidebar */
+        .sidenav {
+            z-index: 999;
+        }
+
+        /* Animasi smooth untuk sidebar */
+        .sidenav, .main-content {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Style untuk active state pada mobile */
+        @media (max-width: 991.98px) {
+            .nav-link.active {
+                background-color: #f8f9fa !important;
+                color: #1a1c20 !important;
+            }
+        }
     </style>
 </head>
 
@@ -364,9 +436,15 @@ $avgOrderValue = $orderCount > 0 ? $totalRevenue / $orderCount : 0;
         <!-- Navigation -->
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur">
             <div class="container-fluid py-1 px-3">
-                <nav aria-label="breadcrumb">
-                    <h6 class="font-weight-bolder mb-0">Dashboard</h6>
-                </nav>
+                <!-- Tambahkan tombol toggle -->
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-link text-dark p-0 d-lg-none" id="iconNavbarSidenav">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <nav aria-label="breadcrumb">
+                        <h6 class="font-weight-bolder mb-0">Dashboard</h6>
+                    </nav>
+                </div>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
                     <ul class="navbar-nav justify-content-end">
@@ -736,6 +814,52 @@ $avgOrderValue = $orderCount > 0 ? $totalRevenue / $orderCount : 0;
     <script src="https://demos.creative-tim.com/argon-dashboard/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="https://demos.creative-tim.com/argon-dashboard/assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="https://demos.creative-tim.com/argon-dashboard/assets/js/argon-dashboard.min.js"></script>
+
+    <!-- Tambahkan script untuk mengatur sidebar -->
+    <script>
+        // Fungsi untuk mengatur sidebar
+        var sidenav = document.querySelector(".sidenav");
+        var iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
+        var body = document.getElementsByTagName('body')[0];
+        var iconsRTL = document.querySelectorAll(".sidenav .navbar-nav .nav-link");
+
+        // Toggle sidenav
+        if (iconNavbarSidenav) {
+            iconNavbarSidenav.addEventListener("click", toggleSidenav);
+        }
+
+        function toggleSidenav() {
+            if (body.classList.contains("g-sidenav-pinned")) {
+                body.classList.remove("g-sidenav-pinned");
+                setTimeout(function() {
+                    sidenav.classList.remove("bg-white");
+                }, 100);
+            } else {
+                body.classList.add("g-sidenav-pinned");
+                sidenav.classList.add("bg-white");
+            }
+        }
+
+        // Tutup sidebar ketika klik di luar
+        document.addEventListener("click", function(e) {
+            if (window.innerWidth < 992) {
+                if (!sidenav.contains(e.target) && !iconNavbarSidenav.contains(e.target)) {
+                    if (body.classList.contains("g-sidenav-pinned")) {
+                        body.classList.remove("g-sidenav-pinned");
+                    }
+                }
+            }
+        });
+
+        // Atur ulang sidebar saat resize window
+        window.addEventListener("resize", function() {
+            if (window.innerWidth >= 992) {
+                if (body.classList.contains("g-sidenav-pinned")) {
+                    body.classList.remove("g-sidenav-pinned");
+                }
+            }
+        });
+    </script>
 </body>
 </html>
 
