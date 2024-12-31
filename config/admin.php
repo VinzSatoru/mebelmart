@@ -42,6 +42,11 @@ $adminNav = [
         'icon' => 'ni ni-box-2'
     ],
     [
+        'title' => 'Kategori',
+        'url' => '/admin/categories',
+        'icon' => 'ni ni-box-2'
+    ],
+    [
         'title' => 'Pesanan',
         'url' => '/admin/orders',
         'icon' => 'ni ni-cart'
@@ -55,4 +60,18 @@ $adminNav = [
 
 // Get current page for navigation
 $currentPage = str_replace(BASE_URL, '', $_SERVER['PHP_SELF']);
+
+// Tambahkan fungsi untuk mengecek halaman saat ini
+function isAdminDashboard() {
+    return strpos($_SERVER['PHP_SELF'], '/admin/dashboard.php') !== false;
+}
+
+// Redirect admin ke dashboard jika mencoba mengakses halaman utama
+if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
+    // Jika admin mengakses halaman utama (index.php), redirect ke dashboard
+    if ($_SERVER['PHP_SELF'] === '/index.php' || $_SERVER['PHP_SELF'] === '/') {
+        header('Location: ' . BASE_URL . '/admin/dashboard.php');
+        exit;
+    }
+}
 ?> 

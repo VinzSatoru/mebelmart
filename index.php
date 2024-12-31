@@ -2,6 +2,12 @@
 require_once 'config/config.php';
 require_once 'config/database.php';
 
+// Redirect admin ke dashboard jika mencoba mengakses halaman utama
+if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
+    header('Location: ' . BASE_URL . '/admin/dashboard.php');
+    exit;
+}
+
 $db = new Database();
 $products = $db->getCollection('products')->aggregate([
     [

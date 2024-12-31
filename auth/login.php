@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user->password)) {
         $_SESSION['user_id'] = (string) $user->_id;
         $_SESSION['username'] = $user->username;
-        $_SESSION['is_admin'] = isset($user->is_admin) && $user->is_admin === true;
+        $_SESSION['is_admin'] = isset($user->role) && $user->role === 'admin';
         
-        // Debug info
-        var_dump($_SESSION);
-        
+        // Redirect berdasarkan role
         if ($_SESSION['is_admin']) {
+            // Jika admin, langsung ke dashboard
             header('Location: ' . BASE_URL . '/admin/dashboard.php');
         } else {
+            // Jika bukan admin, ke halaman utama
             header('Location: ' . BASE_URL);
         }
         exit;

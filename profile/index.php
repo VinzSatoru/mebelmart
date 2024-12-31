@@ -206,7 +206,7 @@ include '../includes/header.php';
                             <div class="card h-100 border-0 bg-light">
                                 <div class="card-body">
                                     <h6 class="text-muted mb-2">Nama Lengkap</h6>
-                                    <p class="h5 mb-0"><?= htmlspecialchars($user->name ?? 'Belum diatur') ?></p>
+                                    <p class="h5 mb-0"><?= htmlspecialchars($user->fullname ?? 'Belum diatur') ?></p>
                                 </div>
                             </div>
                         </div>

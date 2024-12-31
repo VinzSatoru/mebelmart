@@ -26,7 +26,7 @@ include '../../includes/header.php';
     <div class="row mb-4">
         <div class="col-12">
             <a href="<?= BASE_URL ?>" class="btn btn-secondary mb-3">
-                <i class="bi bi-arrow-left"></i> Kembali ke Beranda
+                <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
     </div>
